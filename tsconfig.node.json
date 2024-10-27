@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "moduleDetection": "force"
+  },
+  "include": [
+    "vite.config.ts"
+  ]
+}
