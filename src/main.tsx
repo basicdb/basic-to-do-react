@@ -6,6 +6,8 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { TaskProvider } from "@/contexts/TaskContext"
 import Home from './App'
+import { BasicProvider } from '@basictech/react'
+import { schema } from '../basic.config'
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <BasicProvider project_id={schema.project_id} schema={schema}>
+      <App />
+    </BasicProvider>
   </StrictMode>
 )

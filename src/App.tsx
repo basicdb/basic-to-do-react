@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Task from '@/components/Task';
 import Input from '@/components/Input';
-import { useTaskContext } from '@/contexts/TaskContext';
+import { useBasic, useQuery } from '@basictech/react'
 
 const generateRandomId = () => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -10,52 +10,54 @@ const generateRandomId = () => {
 };
 
 export default function Home() {
+  const { db } = useBasic()
+  const todos = useQuery(db.collection('todos').getAll())
   const [searchParams, setSearchParams] = useSearchParams();
-  const { tasks, setTasks } = useTaskContext();
 
   const [isInputHovered, setIsInputHovered] = useState(false);
   const [title, setTitle] = useState('');
   const [date, setDate] = useState<Date | null>(null);
 
-  // Get current view from URL or default to 'all-tasks'
   const currentView = searchParams.get('view') || 'all-tasks';
 
   const getFilteredTasks = useCallback(() => {
+    if (!todos) return [];
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
     switch (currentView) {
       case 'all-tasks':
-        return tasks;
+        return todos;
       case 'Completed':
-        return tasks.filter(task => task.completed);
+        return todos.filter((task: any) => task.completed);
       case 'Delayed':
-        return tasks.filter(task =>
+        return todos.filter((task: any) =>
           !task.completed && task.date && new Date(task.date) < now
         );
       case 'Scheduled':
-        return tasks.filter(task =>
+        return todos.filter((task: any) =>
           !task.completed && task.date && new Date(task.date) >= now
         );
       default:
-        return tasks.filter(task => task.tags.includes(currentView));
+        return todos.filter((task: any) => task.tags.includes(currentView));
     }
-  }, [tasks, currentView]);
+  }, [todos, currentView]);
+
+  const filteredTasks = getFilteredTasks();
 
   const handleDelete = (id: string) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+    db.collection('todos').delete(id);
   };
 
   const handleUpdate = (id: string, field: 'title' | 'date', value: string | Date | null) => {
-    setTasks(tasks.map((task) =>
-      task.id === id ? { ...task, [field]: value } : task
-    ));
+    db.collection('todos').update(id, { [field]: value });
   };
 
   const handleToggleCompleted = (id: string) => {
-    setTasks(tasks.map((task) =>
-      task.id === id ? { ...task, completed: !task.completed } : task
-    ));
+    const task = todos?.find((t: any) => t.id === id);
+    if (task) {
+      db.collection('todos').update(id, { completed: !task.completed });
+    }
   };
 
   const handleAddTask = () => {
@@ -69,15 +71,12 @@ export default function Home() {
           ? [currentView]
           : []
       };
-      setTasks([...tasks, newTask]);
+      db.collection('todos').add(newTask);
       setTitle('');
       setDate(null);
     }
   };
 
-  const filteredTasks = getFilteredTasks();
-
-  // Add effect to update searchParams when URL changes
   useEffect(() => {
     const handleURLChange = () => {
       setSearchParams(new URLSearchParams(window.location.search));
@@ -108,7 +107,7 @@ export default function Home() {
           )}
         </div>
         {filteredTasks.length > 0 ? (
-          filteredTasks.map((task) => (
+          filteredTasks.map((task: any) => (
             <Task
               key={task.id}
               {...task}
