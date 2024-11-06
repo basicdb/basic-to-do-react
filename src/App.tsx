@@ -3,21 +3,50 @@ import { useSearchParams } from 'react-router-dom';
 import Task from '@/components/Task';
 import Input from '@/components/Input';
 import { useTaskContext } from '@/contexts/TaskContext';
-
-const generateRandomId = () => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  return Array.from({ length: 12 }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
-};
+import { generateRandomId } from '@/lib/utils';
 
 export default function Home() {
-  const [searchParams] = useSearchParams();
+  // Code that gets tasks
   const { tasks, setTasks } = useTaskContext();
-
-  const [isInputHovered, setIsInputHovered] = useState(false);
   const [title, setTitle] = useState('');
   const [date, setDate] = useState<Date | null>(null);
 
-  // Simplified: combine the searchParams read directly into currentView
+  // Code that adds a task
+  const handleAddTask = () => {
+    if (title.trim()) {
+      const newTask = {
+        id: generateRandomId(),
+        title,
+        date: date || null,
+        completed: false
+      };
+      setTasks([...tasks, newTask]);
+      setTitle('');
+      setDate(null);
+    }
+  };
+
+  // Code that deletes a task
+  const handleDelete = (id: string) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  // Code that updates a task
+  const handleUpdate = (id: string, field: 'title' | 'date', value: string | Date | null) => {
+    setTasks(tasks.map((task) =>
+      task.id === id ? { ...task, [field]: value } : task
+    ));
+  };
+
+  const handleToggleCompleted = (id: string) => {
+    setTasks(tasks.map((task) =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    ));
+  };
+
+  // Rest of the code
+  const [isInputHovered, setIsInputHovered] = useState(false);
+  const [searchParams] = useSearchParams();
   const currentView = searchParams.get('view') ?? 'all-tasks';
 
   const getFilteredTasks = useCallback(() => {
@@ -41,36 +70,6 @@ export default function Home() {
         return tasks;
     }
   }, [tasks, currentView]);
-
-  const handleDelete = (id: string) => {
-    setTasks(tasks.filter((task) => task.id !== id));
-  };
-
-  const handleUpdate = (id: string, field: 'title' | 'date', value: string | Date | null) => {
-    setTasks(tasks.map((task) =>
-      task.id === id ? { ...task, [field]: value } : task
-    ));
-  };
-
-  const handleToggleCompleted = (id: string) => {
-    setTasks(tasks.map((task) =>
-      task.id === id ? { ...task, completed: !task.completed } : task
-    ));
-  };
-
-  const handleAddTask = () => {
-    if (title.trim()) {
-      const newTask = {
-        id: generateRandomId(),
-        title,
-        date: date || null,
-        completed: false
-      };
-      setTasks([...tasks, newTask]);
-      setTitle('');
-      setDate(null);
-    }
-  };
 
   const filteredTasks = getFilteredTasks();
 
