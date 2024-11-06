@@ -6,7 +6,6 @@ A modern task management application built with React, TypeScript, and Vite.
 
 - Task creation and management
 - Date scheduling
-- Tag organization
 - Responsive sidebar navigation
 
 ## Getting Started

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Task from '@/components/Task';
 import Input from '@/components/Input';
@@ -10,15 +10,15 @@ const generateRandomId = () => {
 };
 
 export default function Home() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const { tasks, setTasks } = useTaskContext();
 
   const [isInputHovered, setIsInputHovered] = useState(false);
   const [title, setTitle] = useState('');
   const [date, setDate] = useState<Date | null>(null);
 
-  // Get current view from URL or default to 'all-tasks'
-  const currentView = searchParams.get('view') || 'all-tasks';
+  // Simplified: combine the searchParams read directly into currentView
+  const currentView = searchParams.get('view') ?? 'all-tasks';
 
   const getFilteredTasks = useCallback(() => {
     const now = new Date();
@@ -38,7 +38,7 @@ export default function Home() {
           !task.completed && task.date && new Date(task.date) >= now
         );
       default:
-        return tasks.filter(task => task.tags.includes(currentView));
+        return tasks;
     }
   }, [tasks, currentView]);
 
@@ -64,10 +64,7 @@ export default function Home() {
         id: generateRandomId(),
         title,
         date: date || null,
-        completed: false,
-        tags: !['all-tasks', 'completed', 'delayed', 'scheduled'].includes(currentView)
-          ? [currentView]
-          : []
+        completed: false
       };
       setTasks([...tasks, newTask]);
       setTitle('');
@@ -76,16 +73,6 @@ export default function Home() {
   };
 
   const filteredTasks = getFilteredTasks();
-
-  // Add effect to update searchParams when URL changes
-  useEffect(() => {
-    const handleURLChange = () => {
-      setSearchParams(new URLSearchParams(window.location.search));
-    };
-
-    window.addEventListener('popstate', handleURLChange);
-    return () => window.removeEventListener('popstate', handleURLChange);
-  }, []);
 
   return (
     <div className="flex flex-col items-center w-full">

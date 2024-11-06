@@ -15,7 +15,7 @@ function App() {
           <div className="flex flex-row w-full">
             <AppSidebar />
             <div className="flex flex-col w-full">
-              <SidebarTrigger className="text-[#9ba3af] sticky top-0 z-50" />
+              <SidebarTrigger className="text-[#9ba3af] sticky md:hidden top-0 z-50" />
               <Home />
             </div>
           </div>

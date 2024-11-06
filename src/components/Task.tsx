@@ -7,7 +7,6 @@ export interface TaskProps {
     title: string;
     date: Date | null;
     completed: boolean;
-    tags: string[];  // Add this line
     handleDelete: () => void;
     handleUpdate: (id: string, field: 'title' | 'date', value: string | Date | null) => void;
     handleToggleCompleted: () => void;
