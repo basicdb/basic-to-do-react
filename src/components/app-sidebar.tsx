@@ -1,34 +1,14 @@
-import {
-    Inbox,
-    CalendarClock,
-    Calendar,
-    FolderCheck,
-    User2,
-    ChevronUp,
-    ExternalLink,
-    BookOpenText
-} from "lucide-react"
+import { Inbox, CalendarClock, Calendar, FolderCheck, User2, ChevronUp, ExternalLink, BookOpenText } from "lucide-react"
 import { useSearchParams } from 'react-router-dom'
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarFooter } from "@/components/ui/sidebar"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarGroupLabel,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    SidebarHeader,
-    SidebarFooter,
-} from "@/components/ui/sidebar"
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+const MENU_ITEMS = [
+    { view: "all-tasks", label: "All Tasks", icon: Inbox, className: "" },
+    { view: "Delayed", label: "Delayed", icon: CalendarClock, className: "text-red-400" },
+    { view: "Scheduled", label: "Scheduled", icon: Calendar, className: "" },
+    { view: "Completed", label: "Completed", icon: FolderCheck, className: "" }
+];
 
 export function AppSidebar() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -51,43 +31,18 @@ export function AppSidebar() {
                     <SidebarGroupLabel>Main</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton
-                                    isActive={currentView === "all-tasks"}
-                                    onClick={() => handleViewChange("all-tasks")}
-                                >
-                                    <Inbox />
-                                    <span>All Tasks</span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton
-                                    isActive={currentView === "Delayed"}
-                                    onClick={() => handleViewChange("Delayed")}
-                                    className="text-red-400"
-                                >
-                                    <CalendarClock />
-                                    <span>Delayed</span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton
-                                    isActive={currentView === "Scheduled"}
-                                    onClick={() => handleViewChange("Scheduled")}
-                                >
-                                    <Calendar />
-                                    <span>Scheduled</span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton
-                                    isActive={currentView === "Completed"}
-                                    onClick={() => handleViewChange("Completed")}
-                                >
-                                    <FolderCheck />
-                                    <span>Completed</span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
+                            {MENU_ITEMS.map(({ view, label, icon: Icon, className }) => (
+                                <SidebarMenuItem key={view}>
+                                    <SidebarMenuButton
+                                        isActive={currentView === view}
+                                        onClick={() => handleViewChange(view)}
+                                        className={className}
+                                    >
+                                        <Icon />
+                                        <span>{label}</span>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
