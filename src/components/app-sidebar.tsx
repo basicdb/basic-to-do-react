@@ -29,11 +29,11 @@ export function AppSidebar() {
                                 ))}
 
                                 {/* Code for auth */}
-                                <a href="/login" className="flex items-center hover:bg-gray-100 rounded">
+                                <div onClick={() => console.log("insert signin / signout here")} className="flex items-center hover:bg-gray-100 rounded">
                                     <DropdownMenuItem className="w-full cursor-pointer">
                                         Login
                                     </DropdownMenuItem>
-                                </a>
+                                </div>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </SidebarMenuItem>
