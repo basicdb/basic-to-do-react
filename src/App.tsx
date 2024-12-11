@@ -4,9 +4,12 @@ import Task from '@/components/Task';
 import Input from '@/components/Input';
 import { useTaskContext } from '@/contexts/TaskContext';
 import { generateRandomId } from '@/lib/utils';
-
+import { useBasic, useQuery } from '@basictech/react';
 export default function Home() {
   // Code that gets tasks
+  const { db, dbStatus } = useBasic()
+  const DBTasks = useQuery(() => db.collection('todos').getAll())
+  console.log(dbStatus, DBTasks)
   const { tasks, setTasks } = useTaskContext();
   const [title, setTitle] = useState('');
   const [date, setDate] = useState<Date | null>(null);
@@ -55,7 +58,7 @@ export default function Home() {
 
     switch (currentView) {
       case 'all-tasks':
-        return tasks;
+        return DBTasks;
       case 'Completed':
         return tasks.filter(task => task.completed);
       case 'Delayed':

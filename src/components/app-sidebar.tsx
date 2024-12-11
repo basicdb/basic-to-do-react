@@ -3,8 +3,10 @@ import { Sidebar, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { SidebarHeaderContent } from "./SidebarHeaderContent"
 import { EXTERNAL_LINKS } from "@/lib/utils"
+import { useBasic } from "@basictech/react"
 
 export function AppSidebar() {
+    const { signin, signout, isAuthReady, isSignedIn, user } = useBasic()
     return (
         <Sidebar>
             <SidebarHeaderContent />
@@ -14,7 +16,7 @@ export function AppSidebar() {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <SidebarMenuButton>
-                                    <User2 /> Create account
+                                    {isAuthReady && isSignedIn ? user?.email : <><User2 /> Create account</>}
                                     <ChevronUp className="ml-auto" />
                                 </SidebarMenuButton>
                             </DropdownMenuTrigger>
@@ -29,11 +31,18 @@ export function AppSidebar() {
                                 ))}
 
                                 {/* Code for auth */}
-                                <div onClick={() => console.log("insert signin / signout here")} className="flex items-center hover:bg-gray-100 rounded">
+                                {isAuthReady &&
+                                    !isSignedIn ? <div onClick={() => signin()} className="flex items-center hover:bg-gray-100 rounded">
                                     <DropdownMenuItem className="w-full cursor-pointer">
                                         Login
                                     </DropdownMenuItem>
                                 </div>
+                                    : <div onClick={() => signout()} className="flex items-center hover:bg-gray-100 rounded">
+                                        <DropdownMenuItem className="w-full cursor-pointer">
+                                            Logout
+                                        </DropdownMenuItem>
+                                    </div>
+                                }
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </SidebarMenuItem>
