@@ -4,7 +4,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { SidebarHeaderContent } from "./SidebarHeaderContent"
 import { EXTERNAL_LINKS } from "@/lib/utils"
 
+import { useBasic } from '@basictech/react'
+
 export function AppSidebar() {
+    const { isSignedIn, user, dbStatus } = useBasic()
+
+    console.log(dbStatus, user)
     return (
         <Sidebar>
             <SidebarHeaderContent />
@@ -14,7 +19,7 @@ export function AppSidebar() {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <SidebarMenuButton>
-                                    <User2 /> Create account
+                                    <User2 /> {user?.email}
                                     <ChevronUp className="ml-auto" />
                                 </SidebarMenuButton>
                             </DropdownMenuTrigger>
@@ -29,11 +34,19 @@ export function AppSidebar() {
                                 ))}
 
                                 {/* Code for auth */}
-                                <div onClick={() => console.log("insert signin / signout here")} className="flex items-center hover:bg-gray-100 rounded">
-                                    <DropdownMenuItem className="w-full cursor-pointer">
-                                        Login
-                                    </DropdownMenuItem>
-                                </div>
+                                {!isSignedIn ? (
+                                    <div onClick={() => console.log("insert signin / signout here")} className="flex items-center hover:bg-gray-100 rounded">
+                                        <DropdownMenuItem className="w-full cursor-pointer">
+                                            Login
+                                        </DropdownMenuItem>
+                                    </div>
+                                ) : (
+                                    <div onClick={() => console.log("insert signin / signout here")} className="flex items-center hover:bg-gray-100 rounded">
+                                        <DropdownMenuItem className="w-full cursor-pointer">
+                                            Signout
+                                        </DropdownMenuItem>
+                                    </div>
+                                )}
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </SidebarMenuItem>

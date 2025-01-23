@@ -7,21 +7,26 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { TaskProvider } from "@/contexts/TaskContext"
 import Home from './App'
 
+import { BasicProvider } from '@basictech/react'
+import { schema } from '../basic.config'
+
 function App() {
   return (
-    <BrowserRouter>
-      <TaskProvider>
-        <SidebarProvider>
-          <div className="flex flex-row w-full">
-            <AppSidebar />
-            <div className="flex flex-col w-full">
-              <SidebarTrigger className="text-[#9ba3af] sticky md:hidden top-0 z-50" />
-              <Home />
+    <BasicProvider project_id={schema.project_id} schema={schema} debug={true}>
+      <BrowserRouter>
+        <TaskProvider>
+          <SidebarProvider>
+            <div className="flex flex-row w-full">
+              <AppSidebar />
+              <div className="flex flex-col w-full">
+                <SidebarTrigger className="text-[#9ba3af] sticky md:hidden top-0 z-50" />
+                <Home />
+              </div>
             </div>
-          </div>
-        </SidebarProvider>
-      </TaskProvider>
-    </BrowserRouter>
+          </SidebarProvider>
+        </TaskProvider>
+      </BrowserRouter>
+    </BasicProvider>
   )
 }
 
